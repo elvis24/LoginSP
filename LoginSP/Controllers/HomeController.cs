@@ -33,6 +33,7 @@ namespace LoginSP.Controllers
 
         public ActionResult CerrarSesion()
         {
+
             Session["usuario"] = null;
             return RedirectToAction("Login", "Acceso");
         }
