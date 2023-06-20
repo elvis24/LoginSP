@@ -1,0 +1,49 @@
+﻿
+create database DB_ACCESO
+
+use DB_ACCESO
+
+CREATE TABLE USUARIO(
+IdUsuario int primary key identity(1,1),
+correo varchar(100),
+clave varchar(100)
+)
+
+create proc sp_ResgistrarUsuario(@Correo varchar(100), @Clave varchar(500), @Registrado bit output, @Mensaje varchar(100)output) 
+as
+	begin
+		if(not exists(select*from USUARIO WHERE CORREO = @Correo))
+		begin
+			insert into USUARIO(correo,clave)values(@Correo,@Clave)
+			set @Registrado = 1
+			set @Mensaje = 'usuario registrado'
+		end
+		else
+			begin
+				set @Registrado = 0
+				set	@Mensaje ='correo ya existe'
+			end
+	 end
+
+
+create proc sp_validarUsuario(
+@Correo varchar(100),
+@Clave varchar(500)
+)
+as
+  begin
+	if(exists(select*from USUARIO where correo = @Correo and clave = @Clave))
+		select IdUsuario from USUARIO WHERE correo = @Correo and clave = @Clave
+		else
+			select '0'
+
+   end
+
+ 
+ declare @registrado bit, @mensaje varchar(100)
+ exec sp_ResgistrarUsuario 'capirulo@mail.com','ecd71870d1963316a97e3ac3408c9835ad8cf0f3c1bc703527c30265534f75ae', @registrado output, @mensaje output
+
+ select @registrado
+ select @mensaje
+
+ exec sp_validarUsuario 'papu@mail.com','79ca452eafccda0cde814dbb71afc15bbf73717a68bb00f834d6f13658556b67'
